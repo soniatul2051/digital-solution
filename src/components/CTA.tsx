@@ -4,8 +4,30 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { FiArrowRight, FiStar, FiTrendingUp, FiUsers, FiClock } from 'react-icons/fi'
 import { HiOutlineSparkles } from 'react-icons/hi'
+import { useState, useEffect } from 'react'
 
 const CTA = () => {
+  const [mounted, setMounted] = useState(false)
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+
+  useEffect(() => {
+    setMounted(true)
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight
+    })
+
+    const handleResize = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      })
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const stats = [
     { icon: <FiStar className="w-6 h-6" />, value: '500+', label: 'Happy Clients' },
     { icon: <FiTrendingUp className="w-6 h-6" />, value: '98%', label: 'Success Rate' },
@@ -35,31 +57,33 @@ const CTA = () => {
         />
       </div>
       
-      {/* Animated Particles Effect */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ 
-              x: Math.random() * window.innerWidth, 
-              y: Math.random() * window.innerHeight,
-              scale: 0 
-            }}
-            animate={{ 
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-              scale: [0, 1, 0],
-              opacity: [0, 0.5, 0]
-            }}
-            transition={{ 
-              duration: Math.random() * 10 + 10,
-              repeat: Infinity,
-              delay: Math.random() * 5
-            }}
-            className="absolute w-2 h-2 bg-white/20 rounded-full"
-          />
-        ))}
-      </div>
+      {/* Animated Particles Effect - Fixed */}
+      {mounted && dimensions.width > 0 && (
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ 
+                x: Math.random() * dimensions.width, 
+                y: Math.random() * dimensions.height,
+                scale: 0 
+              }}
+              animate={{ 
+                x: Math.random() * dimensions.width,
+                y: Math.random() * dimensions.height,
+                scale: [0, 1, 0],
+                opacity: [0, 0.5, 0]
+              }}
+              transition={{ 
+                duration: Math.random() * 10 + 10,
+                repeat: Infinity,
+                delay: Math.random() * 5
+              }}
+              className="absolute w-2 h-2 bg-white/20 rounded-full"
+            />
+          ))}
+        </div>
+      )}
 
       {/* Floating Shapes */}
       <motion.div
